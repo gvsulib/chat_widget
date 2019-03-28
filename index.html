@@ -20,9 +20,11 @@
 	h1 { color: #fff; background-color: #0065a4; font-size: 1.25em; text-align: center;padding: .5em; margin-bottom: 1.25em; }
 	h2 { color: #000; font-size: 1em; margin-top:1.5em; }
 	ul.contact {list-style:none;margin:0;padding:0;color:#000;margin-top:.75em;}
-	ul.contact li {padding:0;margin-bottom:.4em;}
+	ul.contact li {padding:0;margin-bottom:.4em;display: inline-block;}
+	ul.contact li:first-child { margin-right: 4%; }
 	@media screen and (min-width: 400px) {
 		.lib-form { width: 94%; padding: 1.5em 2%; max-width: 25em;}
+		ul.contact li:first-child { margin-right:2em; }
 	}
 	</style>
 
@@ -48,6 +50,9 @@
 				<li>Text: <a href="sms:6168180219" aria-label="Text us at 616 818 0219">616-818-0219</a></li>
 				<li>Phone: <a href="tel:6163313500" aria-label="Call us at 616 331 3500">616-331-3500</a></li>
 			</ul>
+			<hr />
+			<h2>Having a technical issue?</h2> 
+			<p><a id="problem-link" href="https://prod.library.gvsu.edu/status/?problem">Report a problem with the page you were on</a>.</p>
 		
 		</form>   
 		
@@ -60,6 +65,13 @@
 
    // set variables
    var chatOnline, submitUrl;
+
+   var refUrl = encodeURIComponent(document.referrer);
+   console.log(refUrl);
+
+
+   $('#problem-link').attr('href', 'https://prod.library.gvsu.edu/status/?problem&url=' + refUrl);
+
 
 	$(function () {
 	    var minlength = 3;
