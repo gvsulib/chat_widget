@@ -101,10 +101,10 @@
 		$.ajax({
 	                type: "GET",
 	                url: "https://api2.libanswers.com/1.0/chat/widgets/status/" + chatId,
-	                crossDomain: true,
-	                dataType: "jsonp",
+	                //crossDomain: true,
+	                dataType: "json",
 	                success: function(json) {
-	                	chatOnline = json.data.online;
+	                	chatOnline = json.online;
 	                	//chatOnline = false;
 	                	if(chatOnline == false) {
 	                		console.log('Chat is offline');
