@@ -83,7 +83,7 @@
 	        if (value.length >= minlength ) {
 	            $.ajax({
 	                type: "GET",
-	                url: "https://api2.libanswers.com/1.0/search/" + value,
+	                url: "https://help.library.gvsu.edu/api/1.0/search/" + value,
 	                data: {
 	                    'iid' : 1050,
 	                    'callback' : 'localJsonpCallback',
@@ -105,7 +105,7 @@
 	                dataType: "json",
 	                success: function(json) {
 	                	chatOnline = json.online;
-	                	//chatOnline = false;
+	                	//chatOnline = false; 	
 	                	if(chatOnline == false) {
 	                		console.log('Chat is offline');
 	                		$('#la-help').submit(function(e) {
@@ -133,7 +133,7 @@
 	}
 
 	function localJsonpCallback(json) {
-		q = json.data.search.results;
+		var q = json.search.results;
 		if(q.length > 0) {
 			$('ul#results').html('<li><h4 tabindex="0">Are any of these helpful?</h4></li>');
 			$.each(q, function () {
