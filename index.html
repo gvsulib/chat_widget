@@ -27,7 +27,15 @@
 		ul.contact li:first-child { margin-right:2em; }
 	}
 	</style>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-2700108-19"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'UA-2700108-19');
 
+
+</script>
 </head>
 <body>
 
@@ -43,7 +51,7 @@
 		<ul id="results" aria-live="polite" role="listbox">
 		</ul>
 		
-		<input type="submit" class="lib-button-small" value="Search the Knowledge Base">
+		<input type="submit" class="lib-button-small" id="lib-kb" value="Search the Knowledge Base">
 
 		<h2 tabindex="0">Or call or text us:</h2>
 			<ul class="contact">
@@ -99,7 +107,8 @@
 	function getChatStatus() {
 		chatId = 1043;
 		$.ajax({
-	                type: "GET",
+
+				type: "GET",
 	                url: "https://api2.libanswers.com/1.0/chat/widgets/status/" + chatId,
 	                //crossDomain: true,
 	                dataType: "json",
@@ -109,10 +118,18 @@
 	                	if(chatOnline == false) {
 	                		console.log('Chat is offline');
 	                		$('#la-help').submit(function(e) {
+
+	                			console.log('Clicked Knowledge Base Link');
 						   		// Trick the form into searching the knowledge base if you hit submit
 						   		e.preventDefault();
-						   		var searchValue = $('#question').val();
-						   		window.location.href = 'https://help.library.gvsu.edu/search/?q=' + encodeURIComponent(searchValue);
+						   			console.log('Sending event to GA');
+  								ga('send', 'event', 'Knowledge Base', 'Click', {
+    								hitCallback: function() {
+    									var searchValue = $('#question').val();
+						   				window.location.href = 'https://help.library.gvsu.edu/search/?q=' + encodeURIComponent(searchValue);
+    								}
+   								});   
+						   		
 						   });
 	                	} else { // online
 	                		console.log('Chat is online');
@@ -120,12 +137,16 @@
 	                		console.log('Changing the id of the form to indicate chat is online');
 	                		$('.lib-form').attr('action',submitUrl).attr('id','la-chat');
 	                		console.log('Changing the label of the form to reflect chat and not search');
-	                		$('.lib-form').find('input[type="submit"]').val('Ask Question');
+	                		$('.lib-form').find('input[type="submit"]').val('Ask Question').attr('id','lib-chat-button');
 	                		$('#la-chat').submit(function(e) {
 								// Trick the form into starting a chat if you hit submit
 						   		e.preventDefault();
-						   		var searchValue = $('#question').val();
-						   		window.location.href = 'https://v2.libanswers.com/widget_chat.php?hash=6290b3d40228a9e708fa7066d01f56bf&question=' + encodeURIComponent(searchValue);
+						   		console.log('Clicked chat button');
+						   		ga('send', 'event', 'Chat', 'Click', {
+    								hitCallback: function() {
+						   				var searchValue = $('#question').val();
+						   				window.location.href = 'https://v2.libanswers.com/widget_chat.php?hash=6290b3d40228a9e708fa7066d01f56bf&question=' + encodeURIComponent(searchValue);
+						   			}});
 	                		});
 	                	}
 	                }
@@ -157,22 +178,15 @@
 
 		
 
-	}              
+	}  
+
+	   
 
    // Change routing of button if chat is online or not
 
    getChatStatus();
 
 </script>
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-2700108-19', 'auto');
-  ga('send', 'pageview');
-
-</script>
 </body>
 </html>
