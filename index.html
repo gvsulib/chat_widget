@@ -34,7 +34,10 @@
   gtag('js', new Date());
   gtag('config', 'UA-2700108-19');
 
-
+  var _gaq = _gaq || [];
+_gaq.push(["_setAccount", "UA-2700108-19"]);
+_gaq.push(["_setDomainName", "none"]);
+_gaq.push(["_trackPageview"]);
 </script>
 </head>
 <body>
@@ -51,7 +54,7 @@
 		<ul id="results" aria-live="polite" role="listbox">
 		</ul>
 		
-		<input type="submit" class="lib-button-small" id="lib-kb" value="Search the Knowledge Base">
+		<input type="submit" class="lib-button-small" value="Search the Knowledge Base">
 
 		<h2 tabindex="0">Or call or text us:</h2>
 			<ul class="contact">
@@ -77,6 +80,8 @@
    var refUrl = encodeURIComponent(document.referrer);
    console.log(refUrl);
 
+   gtag("create", "UA-2700108-19", {"cookieDomain":"none"});
+	gtag("send", "pageview");
 
    $('#problem-link').attr('href', 'https://prod.library.gvsu.edu/status/?problem&url=' + refUrl);
 
@@ -104,6 +109,15 @@
 	    });
 	}); 
 
+	function recordData(source, url) {
+		console.log('Sending click data to Google Analytics');
+		ga('send', 'event', source, 'Click');
+		setTimeout(function() {
+			window.location.href = url;
+		}, 1000);
+
+	}
+
 	function getChatStatus() {
 		chatId = 1043;
 		$.ajax({
@@ -118,18 +132,11 @@
 	                	if(chatOnline == false) {
 	                		console.log('Chat is offline');
 	                		$('#la-help').submit(function(e) {
-
+	                			var searchValue = $('#question').val();
 	                			console.log('Clicked Knowledge Base Link');
 						   		// Trick the form into searching the knowledge base if you hit submit
 						   		e.preventDefault();
-						   			console.log('Sending event to GA');
-  								ga('send', 'event', 'Knowledge Base', 'Click', {
-    								hitCallback: function() {
-    									var searchValue = $('#question').val();
-						   				window.location.href = 'https://help.library.gvsu.edu/search/?q=' + encodeURIComponent(searchValue);
-    								}
-   								});   
-						   		
+  								recordData('Knowledge Base Search', 'https://help.library.gvsu.edu/search/?q=' + encodeURIComponent(searchValue));  
 						   });
 	                	} else { // online
 	                		console.log('Chat is online');
@@ -141,12 +148,10 @@
 	                		$('#la-chat').submit(function(e) {
 								// Trick the form into starting a chat if you hit submit
 						   		e.preventDefault();
+						   		var searchValue = $('#question').val();
 						   		console.log('Clicked chat button');
-						   		ga('send', 'event', 'Chat', 'Click', {
-    								hitCallback: function() {
-						   				var searchValue = $('#question').val();
-						   				window.location.href = 'https://v2.libanswers.com/widget_chat.php?hash=6290b3d40228a9e708fa7066d01f56bf&question=' + encodeURIComponent(searchValue);
-						   			}});
+						   		recordData('Knowledge Base', 'https://v2.libanswers.com/widget_chat.php?hash=6290b3d40228a9e708fa7066d01f56bf&question=' + encodeURIComponent(searchValue));  		
+						   				
 	                		});
 	                	}
 	                }
@@ -158,7 +163,7 @@
 		if(q.length > 0) {
 			$('ul#results').html('<li><h4 tabindex="0">Are any of these helpful?</h4></li>');
 			$.each(q, function () {
-			$('ul#results').append('<li id="answer-' + this.id + '"><a href="' + this.url + '" role="option">' + this.question + '</a></li>');
+			$('ul#results').append('<li class="kb-links" id="answer-' + this.id + '"><a href="' + this.url + '" role="option">' + this.question + '</a></li>');
 
 			// Change the button label
 			console.log('Changing the button text');
@@ -172,6 +177,11 @@
        		console.log(this.question);
        		console.log(this.url);
        		console.log(this.topics[0]);
+
+       		$('.kb-links').click(function(e) {
+       			e.preventDefault();
+       			recordData('Knowledge Base Entry', e.target.href);
+       		});
     	});
 		}
 		
